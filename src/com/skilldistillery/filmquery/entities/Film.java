@@ -17,6 +17,8 @@ public class Film {
 	private String specialFeatures;
 	private List<Actor> actorList;
 
+	
+
 	public Film() {
 		super();
 	}
@@ -64,7 +66,7 @@ public class Film {
 		return releaseYear;
 	}
 
-	public void setReleaseYear(int releaseYear) {
+	public void setReleaseYear(Integer releaseYear) {
 		this.releaseYear = releaseYear;
 	}
 
@@ -96,7 +98,7 @@ public class Film {
 		return length;
 	}
 
-	public void setLength(int length) {
+	public void setLength(Integer length) {
 		this.length = length;
 	}
 
@@ -122,6 +124,13 @@ public class Film {
 
 	public void setSpecialFeatures(String specialFeatures) {
 		this.specialFeatures = specialFeatures;
+	}
+	public List<Actor> getActorList() {
+		return actorList;
+	}
+
+	public void setActorList(List<Actor> actorList) {
+		this.actorList = actorList;
 	}
 
 	@Override
