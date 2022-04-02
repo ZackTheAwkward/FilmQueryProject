@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import com.skilldistillery.filmquery.entities.Actor;
 import com.skilldistillery.filmquery.entities.Film;
@@ -120,6 +121,48 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 			System.err.println("Invalid Response");
 		}
 		return actorList;
+	}
+
+	@Override
+	public Film findFilmByKeyword(String input) {
+		Film fm = null;
+		Connection conn;
+		try {
+			conn = DriverManager.getConnection(URL, user, pass);
+			String sqltxt;
+			sqltxt = "SELECT * FROM film WHERE film.title LIKE ? OR film.description LIKE ?  ";
+			PreparedStatement stmt = conn.prepareStatement(sqltxt);
+			stmt.setString(1, "%" + input + "%");
+			stmt.setString(2, "%" + input + "%");
+			ResultSet rs = stmt.executeQuery();
+			
+			while(rs.next()) {
+				fm = new Film();
+				fm.setId(rs.getInt("id"));
+				fm.setTitle(rs.getString("title"));
+				fm.setDescription(rs.getString("description"));
+				fm.setReleaseYear(rs.getInt("release_year"));
+				fm.setLanguageId(rs.getInt("language_id"));
+				fm.setRentalRate(rs.getDouble("rental_rate"));
+				fm.setLength(rs.getInt("length"));
+				fm.setReplacementCost(rs.getDouble("replacement_cost"));
+				fm.setRating(rs.getString("rating"));
+				fm.setSpecialFeatures(rs.getString("special_features"));
+				System.out.println("Title: " + fm.getTitle() + ", Release Year: " + fm.getReleaseYear()
+				+ ", Rating: " + fm.getRating() + ", Descripton: " + fm.getDescription());
+			}
+			rs.close();
+			stmt.close();
+			conn.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.err.println("Invalid Response");
+		}
+		
+		
+		
+		return fm;
 	}
 
 }
