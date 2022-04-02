@@ -11,6 +11,7 @@ import java.util.Scanner;
 
 import com.skilldistillery.filmquery.entities.Actor;
 import com.skilldistillery.filmquery.entities.Film;
+import com.skilldistillery.filmquery.entities.Language;
 
 public class DatabaseAccessorObject implements DatabaseAccessor {
 	private static final String URL = "jdbc:mysql://localhost:3306/sdvid?useSSL=false&useLegacyDatetimeCode=false&serverTimezone=US/Mountain";
@@ -51,7 +52,17 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 				fm.setReplacementCost(rs.getDouble("replacement_cost"));
 				fm.setRating(rs.getString("rating"));
 				fm.setSpecialFeatures(rs.getString("special_features"));
+				
+				int languageId = fm.getLanguageId();
+				
 				fm.setActorList(findActorsByFilmId(filmId));
+				fm.setLanguageList(languageFromId(languageId));
+				
+				System.out.println("Title: " + fm.getTitle() + ", Release Year: " + fm.getReleaseYear() + ", Rating: "
+						+ fm.getRating() + ", Descripton: " + fm.getDescription());
+				System.out.println(fm.getLanguageList());
+				System.out.println("Actors: " + fm.getActorList());
+				System.out.println();
 
 			}
 			rs.close();
@@ -104,7 +115,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 			PreparedStatement stmt = conn.prepareStatement(sqltxt);
 			stmt.setInt(1, filmId);
 			ResultSet rs = stmt.executeQuery();
-			
+
 			while (rs.next()) {
 				Actor actor = new Actor();
 				actor.setId(rs.getInt("id"));
@@ -135,8 +146,8 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 			stmt.setString(1, "%" + input + "%");
 			stmt.setString(2, "%" + input + "%");
 			ResultSet rs = stmt.executeQuery();
-			
-			while(rs.next()) {
+
+			while (rs.next()) {
 				fm = new Film();
 				fm.setId(rs.getInt("id"));
 				fm.setTitle(rs.getString("title"));
@@ -148,8 +159,15 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 				fm.setReplacementCost(rs.getDouble("replacement_cost"));
 				fm.setRating(rs.getString("rating"));
 				fm.setSpecialFeatures(rs.getString("special_features"));
-				System.out.println("Title: " + fm.getTitle() + ", Release Year: " + fm.getReleaseYear()
-				+ ", Rating: " + fm.getRating() + ", Descripton: " + fm.getDescription());
+				int filmId = fm.getId();
+				int languageId = fm.getLanguageId();
+				fm.setActorList(findActorsByFilmId(filmId));
+				fm.setLanguageList(languageFromId(languageId));
+				System.out.println("Title: " + fm.getTitle() + ", Release Year: " + fm.getReleaseYear() + ", Rating: "
+						+ fm.getRating() + ", Descripton: " + fm.getDescription());
+				System.out.println(fm.getLanguageList());
+				System.out.println("Cast: " + fm.getActorList());
+				System.out.println();
 			}
 			rs.close();
 			stmt.close();
@@ -159,10 +177,35 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 			e.printStackTrace();
 			System.err.println("Invalid Response");
 		}
-		
-		
-		
+
 		return fm;
+	}
+
+	@Override
+	public Language languageFromId(int idForLanguage) {
+		Language listLang = null;
+		Connection conn;
+		try {
+			conn = DriverManager.getConnection(URL, user, pass);
+			String sqltxt;
+			sqltxt = "SELECT l.name FROM language l JOIN film f ON f.language_id = l.id WHERE language_id = ?";
+			PreparedStatement stmt = conn.prepareStatement(sqltxt);
+			stmt.setInt(1, idForLanguage);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				listLang = new Language();
+				listLang.setName(rs.getString("name"));
+
+			}
+			rs.close();
+			stmt.close();
+			conn.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.err.println("Invalid Response");
+		}
+		return listLang;
 	}
 
 }

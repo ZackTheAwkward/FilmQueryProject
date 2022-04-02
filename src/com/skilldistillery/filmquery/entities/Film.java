@@ -16,8 +16,8 @@ public class Film {
 	private String rating;
 	private String specialFeatures;
 	private List<Actor> actorList;
+	private Language languageList;
 
-	
 
 	public Film() {
 		super();
@@ -132,13 +132,22 @@ public class Film {
 	public void setActorList(List<Actor> actorList) {
 		this.actorList = actorList;
 	}
+	
+
+	public Language getLanguageList() {
+		return languageList;
+	}
+
+	public void setLanguageList(Language language) {
+		this.languageList = language;
+	}
 
 	@Override
 	public String toString() {
 		return "Film ID: " + id + ", Title: " + title + ", Description: " + description + ", Release Year: "
 				+ releaseYear + ", Language ID: " + languageId + ", Rental Duration: " + rentalDuration
 				+ ", Rental Rate: " + rentalRate + ", Length: " + length + ", Replacement Cost: " + replacementCost
-				+ ", Rating: " + rating + ", Special Features: " + specialFeatures;
+				+ ", Rating: " + rating + ", Special Features: " + specialFeatures + ", Actor List: " + actorList;
 	}
 
 	@Override
